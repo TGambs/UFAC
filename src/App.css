@@ -1,28 +1,20 @@
-.logo.vite:hover {
-  filter: drop-shadow(0 0 2em #747bff);
-}
-
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafb);
-}
-
-.logo.ufac{
-  height: 50%;
-  width: 50%;
-  align-self: center;
-}
-.logo.ufac:hover {
-  filter: drop-shadow(0 0 2em #61dafb);
-}
 
 :root {
+  /* variable values used multiple times */
+  --bg: #1e1f26;
+  --panel: #252730;
+  --accent: #5b7fff;
+  --text: #e8e9ed;
+  --text-muted: #9a9ca8;
+  --btn: #2f313d;
+  --btn-hover: #3a3d4d;
+
+  background-color: var(--bg);
   font-family: Inter, Avenir, Helvetica, Arial, sans-serif;
   font-size: 16px;
+  color: var(--text);
   line-height: 24px;
   font-weight: 400;
-
-  color: #0f0f0f;
-  background-color: #f6f6f6;
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -31,96 +23,144 @@
   -webkit-text-size-adjust: 100%;
 }
 
-.container {
+/* ------------------ For Images -------------------- */
+.ufacLogo{
+  height: 200px;
+  width: 200px;
+  clip-path: inset(40px 20px 40px 20px round 10%); /* crops the image and puts a radius on it */
+  align-self: center;
+  padding: 5px 5px 5px 5px;
+}
+.ufacLogo:hover {
+  filter: drop-shadow(0 0 0.5em #61dafb);
+}
+
+/* ------------------ END of Images ------------------ */
+
+
+/* ---------------------- Other ----------------------- */
+
+.container { /* holds everything */
   margin: 0;
-  padding-top: 10vh;
   display: flex;
   flex-direction: column;
   justify-content: center;
   text-align: center;
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: 0.75s;
-}
-
-.logo.tauri:hover {
-  filter: drop-shadow(0 0 2em #24c8db);
-}
-
-.row {
-  display: flex;
-  justify-content: center;
-}
-
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
-}
-
-a:hover {
-  color: #535bf2;
-}
-
 h1 {
   text-align: center;
+  margin-top: 5px;
+  margin-bottom: 5px;
 }
 
-input,
-button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  color: #0f0f0f;
-  background-color: #ffffff;
-  transition: border-color 0.25s;
-  box-shadow: 0 2px 2px rgba(0, 0, 0, 0.2);
+/* -------------------- END of Other ------------------------ */
+
+/* ---------------------- For Taskbar --------------------------- */
+#taskBar {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: var(--panel);
+  padding: 16px 0 12px;
+  border-bottom: 1px solid #33343f;
 }
 
-button {
+#tbTitle {
+  width: 100%;
+  text-align: center;
+  color: var(--text);
+  font-size: 22px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  margin-bottom: 6px;
+}
+#tbTitle p {
+  font-size: 16px;
+  margin-bottom: 2px;
+}
+
+#tbButtons {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+}
+
+#tbButtons button {
+  background-color: var(--btn);
+  color: var(--text);
+  border: none;
+  border-radius: 6px;
+  padding: 8px 20px;
+  font-size: 14px;
   cursor: pointer;
+  transition: background-color 0.15s ease;
 }
 
-button:hover {
-  border-color: #396cd8;
-}
-button:active {
-  border-color: #396cd8;
-  background-color: #e8e8e8;
+#tbButtons button:hover {
+  background-color: var(--btn-hover);
 }
 
-input,
-button {
-  outline: none;
+#tbButtons button:active,
+#tbButtons button.active {
+  background-color: var(--btn);
+  color: white;
 }
 
-#greet-input {
-  margin-right: 5px;
+/* ------------------- END of Taskbar ----------------------------- */
+
+
+/* -------------------- For About Page ---------------------------- */
+#pg1Txt{
+  background-color: var(--panel);
+  display: block;
+  padding: 5px 0px 5px 0px;
+  margin: 0px 15px 0px 15px;
+  border-radius: 10px;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    color: #f6f6f6;
-    background-color: #2f2f2f;
-  }
+#pg1Txt p{
+  /*justify-self: left;*/
+}
 
-  a:hover {
-    color: #24c8db;
-  }
 
-  input,
-  button {
-    color: #ffffff;
-    background-color: #0f0f0f98;
-  }
-  button:active {
-    background-color: #0f0f0f69;
-  }
+/* ------------------- For the Drives Page ----------------------- */
+table {
+  width: 90%;
+  margin: 20px auto;
+  border-collapse: collapse;
+  background-color: var(--panel);
+  color: var(--text);
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+}
+
+thead {
+  background-color: var(--btn);
+}
+
+th {
+  text-align: left;
+  padding: 10px 16px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-muted);
+  border-bottom: 1px solid #33343f;
+}
+
+td {
+  padding: 10px 16px;
+  font-size: 14px;
+  border-bottom: 1px solid #33343f;
+}
+
+tbody tr:hover {
+  background-color: var(--btn-hover);
+}
+
+tbody tr:last-child td {
+  border-bottom: none;
 }
