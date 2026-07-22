@@ -8,6 +8,10 @@
   --text-muted: #9a9ca8;
   --btn: #2f313d;
   --btn-hover: #3a3d4d;
+  --btn2: #7058c9;
+  --btn2-hover: #8d76d8;
+  --btn3: #9e4b4b;
+  --btn3-hover: #c96b6b;
 
   background-color: var(--bg);
   font-family: Inter, Avenir, Helvetica, Arial, sans-serif;
@@ -163,4 +167,45 @@ tbody tr:hover {
 
 tbody tr:last-child td {
   border-bottom: none;
+}
+
+#pg2RefreshBtn{
+  background-color: var(--btn2);
+  color: var(--text);
+  border: none;
+  border-radius: 6px;
+  padding: 8px 20px;
+  margin-top: 15px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+#pg2RefreshBtn:hover{
+  background-color: #8d76d8;
+}
+
+#pg2EjectBtn{
+  background-color: var(--btn3);
+  color: var(--text);
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  padding: 7px;
+  transition: background-color 0.15s ease;
+  justify-self: center;
+}
+#pg2EjectBtn:hover{
+  background-color: var(--btn3-hover);
+}
+
+#pg2EjectMssg{
+  background-color: #356b4a;
+  color: var(--text);
+  width:fit-content;
+  justify-self:center;
+  padding: 7px;
+  border-radius: 20px;
+}
+#pg2EjectMssg p{
+  margin: 0px;
 }

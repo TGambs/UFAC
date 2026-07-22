@@ -8,7 +8,7 @@ fn greet(name: &str) -> String {
 pub fn run() {
     tauri::Builder::default()
         .plugin(tauri_plugin_opener::init())
-        .invoke_handler(tauri::generate_handler![greet, list_drives])
+        .invoke_handler(tauri::generate_handler![greet, list_drives, eject_drive,])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
@@ -28,7 +28,8 @@ struct Drive {
     filesystem: String,
     size_gb: f64,
     free_gb: f64,
-    drive_type: String
+    drive_type: String,
+    eject: bool
 }
 
 #[tauri::command]
@@ -72,6 +73,10 @@ fn list_drives() -> Result<Vec<Drive>, String> {
                 _ => "Unknown",
             };
 
+            // To see if it is ejectable
+            // if drive_type is removable, add a button here to allow the user to eject the device from the host machine
+            let eject = drive_type_num == 2;
+
             Some(Drive {
                 letter: item.get("DeviceID")?.as_str().unwrap_or("?").to_string(),
                 label: item.get("VolumeName").and_then(|v| v.as_str()).unwrap_or("").to_string(),
@@ -79,6 +84,7 @@ fn list_drives() -> Result<Vec<Drive>, String> {
                 size_gb: (size / 1_073_741_824.0 * 100.0).round() / 100.0,
                 free_gb: (free / 1_073_741_824.0 * 100.0).round() / 100.0,
                 drive_type: drive_type.to_string(),
+                eject,
             })
         }).collect();
 
@@ -86,3 +92,30 @@ fn list_drives() -> Result<Vec<Drive>, String> {
 }
 
 // ----------------------------------------------------- ^ - Storage Reading - ^ -------------------------------------------------------------
+
+// -------------- Command for ejecting ------------------
+#[tauri::command]
+fn eject_drive(letter: String) -> Result<(), String> {
+    let script = format!(
+        r#"
+$drive = "{}"
+(New-Object -comObject Shell.Application).Namespace(17).ParseName($drive).InvokeVerb("Eject")
+"#,
+        letter
+    );
+
+    let output = Command::new("powershell")
+        .args([
+            "-NoProfile",
+            "-Command",
+            &script,
+        ])
+        .output()
+        .map_err(|e| e.to_string())?;
+
+    if output.status.success() {
+        Ok(())
+    } else {
+        Err(String::from_utf8_lossy(&output.stderr).to_string())
+    }
+}

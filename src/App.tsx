@@ -10,6 +10,7 @@ interface Drive {
   size_gb: number;
   free_gb: number;
   drive_type: string;
+  eject: boolean;
 }
 
 /* functions used in HTML */
@@ -17,8 +18,10 @@ function App() {
   const [drives, setDrives] = useState<Drive[]>([]);
   const [error, setError] = useState<string>("");
   const [activePage, setActivePage] = useState<string>("home"); // used for changing which div to show
+  const [ejectMessage, setEjectMessage] = useState(""); // used for safe eject message
 
   const loadDrives = async () => {
+    setEjectMessage(""); // removes safe eject message
     try {
       const result = await invoke<Drive[]>("list_drives");
       setDrives(result);
@@ -28,9 +31,22 @@ function App() {
     }
   };
 
+  const ejectDrive = async (letter: string) => {
+  try {
+    await invoke("eject_drive", { letter });
+
+    setEjectMessage(`${letter} is safe to remove now`);
+  } catch (e) {
+    setEjectMessage(`Failed to eject ${letter}.`);
+    console.error(e);
+  }
+};
+
   useEffect(() => {
     loadDrives();
   }, []);
+
+  
 
   /* --------------------------------------- Main HTML for UI ------------------------------------------------------------- */
   return (
@@ -70,9 +86,8 @@ function App() {
 
       {activePage === "pg2" && (
         <div id="mainPg2">
-          <p>This is page 2</p>
 
-          <button onClick={loadDrives}>Refresh drives</button>
+          <button id="pg2RefreshBtn" onClick={loadDrives}>Refresh drives</button>
           {error && <p style={{ color: "red" }}>{error}</p>}
           <table>
             <thead>
@@ -83,6 +98,7 @@ function App() {
                 <th>Filesystem</th>
                 <th>Size (GB)</th>
                 <th>Free (GB)</th>
+                <th>Eject?</th>
               </tr>
             </thead>
             <tbody>
@@ -94,10 +110,17 @@ function App() {
                   <td>{d.filesystem}</td>
                   <td>{d.size_gb}</td>
                   <td>{d.free_gb}</td>
+                  <td>{d.eject && (<button id="pg2EjectBtn" onClick={() => ejectDrive(d.letter)}>Eject</button>)}</td>
                 </tr>
               ))}
             </tbody>
           </table>
+
+          {ejectMessage && (
+            <div id="pg2EjectMssg">
+              <p>✓ {ejectMessage} ✓</p>
+            </div>
+          )}
 
         </div>
 
