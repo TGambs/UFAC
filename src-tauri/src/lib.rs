@@ -8,7 +8,7 @@ fn greet(name: &str) -> String {
 pub fn run() {
     tauri::Builder::default()
         .plugin(tauri_plugin_opener::init())
-        .invoke_handler(tauri::generate_handler![greet, list_drives, eject_drive,])
+        .invoke_handler(tauri::generate_handler![greet, list_drives, eject_drive, format_drive,])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
@@ -110,6 +110,56 @@ $drive = "{}"
             "-Command",
             &script,
         ])
+        .output()
+        .map_err(|e| e.to_string())?;
+
+    if output.status.success() {
+        Ok(())
+    } else {
+        Err(String::from_utf8_lossy(&output.stderr).to_string())
+    }
+}
+
+
+// --------------------------- Command for formatting drives ------------------------------------------
+#[tauri::command]
+fn format_drive(letter: String, filesystem: String, label: String) -> Result<(), String> {
+    // Strip trailing colon if present (DeviceID comes through as "D:")
+    let drive_letter = letter.trim_end_matches(':').to_string();
+
+    // Safety check: re-verify this is actually removable before formatting,
+    // never trust the frontend alone for something destructive
+    let check = Command::new("powershell")
+        .args([
+            "-NoProfile",
+            "-Command",
+            &format!(
+                "(Get-CimInstance Win32_LogicalDisk -Filter \"DeviceID='{}:'\").DriveType",
+                drive_letter
+            ),
+        ])
+        .output()
+        .map_err(|e| format!("Failed to verify drive type: {}", e))?;
+
+    let drive_type_str = String::from_utf8_lossy(&check.stdout).trim().to_string();
+    if drive_type_str != "2" {
+        return Err("Refusing to format: drive is not removable.".to_string());
+    }
+
+    // Basic validation on filesystem + label to avoid injecting garbage into the script
+    let allowed_fs = ["FAT32", "exFAT", "NTFS"];
+    if !allowed_fs.contains(&filesystem.as_str()) {
+        return Err("Unsupported filesystem type.".to_string());
+    }
+    let safe_label: String = label.chars().filter(|c| c.is_alphanumeric() || *c == ' ' || *c == '_' || *c == '-').take(32).collect();
+
+    let script = format!(
+        r#"Format-Volume -DriveLetter {} -FileSystem {} -NewFileSystemLabel "{}" -Force -Confirm:$false"#,
+        drive_letter, filesystem, safe_label
+    );
+
+    let output = Command::new("powershell")
+        .args(["-NoProfile", "-Command", &script])
         .output()
         .map_err(|e| e.to_string())?;
 
