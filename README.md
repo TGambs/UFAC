@@ -6,4 +6,7 @@ New additions to come:
 - Verification that the USB works with certain CDJs
 - And more...
 
-This app utilises FFmpeg (ffmpeg.exe), licensed under GPLv3. Source available at ffmpeg.org
+-----------------------------------------------------------------
+This app utilises FFmpeg (ffmpeg.exe), licensed under GPLv3.
+Source code: https://github.com/FFmpeg/FFmpeg
+License terms: https://www.gnu.org/licenses/gpl-3.0.html
