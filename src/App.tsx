@@ -1,6 +1,7 @@
 import "./App.css";
 import { useEffect, useState } from "react";
 import { invoke } from "@tauri-apps/api/core";
+import { open } from "@tauri-apps/plugin-dialog";
 
 /* interface families */
 interface Drive {
@@ -27,6 +28,13 @@ function App() {
   const [formatLabel, setFormatLabel] = useState<string>("");
   const [formatting, setFormatting] = useState(false);
   const [formatMessage, setFormatMessage] = useState("");
+
+  /* for formatting audio */
+  const [selectedFiles, setSelectedFiles] = useState<string[]>([]);
+  const [targetFormat, setTargetFormat] = useState<string>("wav");
+  const [converting, setConverting] = useState(false);
+  const [conversionResults, setConversionResults] = useState<{ file: string; status: string }[]>([]);
+
 
   const loadDrives = async () => {
     setEjectMessage(""); // removes safe eject message
@@ -82,6 +90,51 @@ const formatDrive = async () => {
   }
 };
 
+
+const pickFiles = async () => {
+  const selected = await open({
+    multiple: true,
+    filters: [{ name: "Audio", extensions: ["mp3", "wav", "m4a", "flac", "aac", "ogg"] }],
+  });
+  if (selected) {
+    setSelectedFiles(Array.isArray(selected) ? selected : [selected]);
+  }
+};
+
+const pickFolder = async () => {
+  const selected = await open({ directory: true });
+  if (selected && typeof selected === "string") {
+    // list audio files inside the folder via a Rust command (see note below)
+    const files = await invoke<string[]>("list_audio_files", { folderPath: selected });
+    setSelectedFiles(files);
+  }
+};
+
+const convertFiles = async () => {
+  if (selectedFiles.length === 0) return;
+  setConverting(true);
+  setConversionResults([]);
+
+  const results: { file: string; status: string }[] = [];
+  for (const file of selectedFiles) {
+    try {
+      await invoke("convert_audio", { inputPath: file, targetFormat });
+      results.push({ file, status: "Converted" });
+    } catch (e) {
+      results.push({ file, status: `Failed: ${String(e)}` });
+    }
+  }
+
+  setConversionResults(results);
+  setConverting(false);
+};
+
+const clearSelectedFiles = () => {
+  setSelectedFiles([]);
+  setConversionResults([]);
+};
+
+
   useEffect(() => {
     loadDrives();
   }, []);
@@ -110,11 +163,13 @@ const formatDrive = async () => {
         <div id="mainPg1">
           <img src="/Images/UFAC_icon.png" className="ufacLogo"></img>
           <div id="pg1Txt">
-            <p><b>Within this app you are able to:</b>
+
+            {/* <p><b>Within this app you are able to:</b>
               <br></br>- View and format external usb drives plugged in
               <br></br>- Convert audio files to different file types
-              
-            </p>
+              <br></br>- More coming soon...
+            </p> */}
+            
             <p>The aim of this project is to simplify the process of formatting and managing USB storage for DJs.
                As a new DJ myself, understanding the process of setting up and formatting USBs, to be used on many 
                different decks, is difficult. But having an all-in-one app which allows you to format and manage 
@@ -124,7 +179,7 @@ const formatDrive = async () => {
 
           <div id="pg1Pols">
             <p>This app does not send any data externally, all data used within the app is either stored locally or not stored at all.</p>
-            <p>This app was </p>
+            <p>This app utilises FFmpeg (ffmpeg.exe), licensed under GPLv3. Source available at ffmpeg.org</p>
           </div>
         </div>
       )} {/* End of page 1 */}
@@ -219,12 +274,46 @@ const formatDrive = async () => {
       )} {/* End of Page 2 */}
 
 
-      {activePage === "pg3" &&(
-        <div id="pg3Main">
-          <h2>Audio Conversion</h2>
 
+
+      {activePage === "pg3" && (
+        <div id="pg3Main">
+
+          <div id="pg3Controls">
+            <button className="pg3PickBtn" onClick={pickFiles}>Select Files</button>
+            <button className="pg3PickBtn" onClick={pickFolder}>Select Folder</button>
+
+            <select value={targetFormat} onChange={(e) => setTargetFormat(e.target.value)}>
+              <option value="wav">WAV</option>
+              <option value="mp3">MP3</option>
+              <option value="m4a">M4A</option>
+              <option value="flac">FLAC</option>
+            </select>
+
+            <button id="pg3ConvBtn" onClick={convertFiles} disabled={selectedFiles.length === 0 || converting}>
+              {converting ? "Converting…" : `Convert ${selectedFiles.length} file(s)`}
+            </button>
+
+            <button id="pg3ClearBtn" onClick={clearSelectedFiles} disabled={selectedFiles.length === 0}>Clear</button>
+          </div>
+
+          {selectedFiles.length > 0 && (
+            <ul id="pg3FileList">
+              {selectedFiles.map((f) => (
+                <li key={f}>{f}</li>
+              ))}
+            </ul>
+          )}
+
+          {conversionResults.length > 0 && (
+            <div id="pg3Results">
+              {conversionResults.map((r) => (
+                <p key={r.file}>{r.file}: {r.status}</p>
+              ))}
+            </div>
+          )}
         </div>
-      )} {/* End of page 3 */}
+      )} {/* end of page 3 */}
 
       
     </main>

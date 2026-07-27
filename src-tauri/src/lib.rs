@@ -8,7 +8,9 @@ fn greet(name: &str) -> String {
 pub fn run() {
     tauri::Builder::default()
         .plugin(tauri_plugin_opener::init())
-        .invoke_handler(tauri::generate_handler![greet, list_drives, eject_drive, format_drive,])
+        .plugin(tauri_plugin_dialog::init())
+        .plugin(tauri_plugin_shell::init())
+        .invoke_handler(tauri::generate_handler![greet, list_drives, eject_drive, format_drive, convert_audio, list_audio_files])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
@@ -168,4 +170,61 @@ fn format_drive(letter: String, filesystem: String, label: String) -> Result<(),
     } else {
         Err(String::from_utf8_lossy(&output.stderr).to_string())
     }
+}
+
+
+
+// ---------------------------------- Commands for audio conversion ------------------------------------------------------------
+
+use std::path::Path;
+
+#[tauri::command]
+fn convert_audio(input_path: String, target_format: String) -> Result<String, String> {
+    let input = Path::new(&input_path);
+    let stem = input.file_stem().and_then(|s| s.to_str()).ok_or("Invalid filename")?;
+    let parent = input.parent().ok_or("Invalid path")?;
+    let output_path = parent.join(format!("{}.{}", stem, target_format));
+    let temp_path = parent.join(format!("{}_tmp.{}", stem, target_format));
+
+    // adjust this path to wherever you bundle ffmpeg.exe
+    let ffmpeg = "ffmpeg.exe";
+
+    let output = Command::new(ffmpeg)
+        .args([
+            "-y",
+            "-i", input.to_str().ok_or("Invalid input path")?,
+            temp_path.to_str().ok_or("Invalid temp path")?,
+        ])
+        .output()
+        .map_err(|e| format!("Failed to run ffmpeg: {}", e))?;
+
+    if !output.status.success() {
+        return Err(String::from_utf8_lossy(&output.stderr).to_string());
+    }
+
+    // only replace/rename once we know ffmpeg succeeded
+    std::fs::rename(&temp_path, &output_path)
+        .map_err(|e| format!("Failed to finalize output file: {}", e))?;
+
+    Ok(output_path.to_string_lossy().to_string())
+}
+
+#[tauri::command]
+fn list_audio_files(folder_path: String) -> Result<Vec<String>, String> {
+    let exts = ["mp3", "wav", "m4a", "flac", "aac", "ogg"];
+    let entries = std::fs::read_dir(&folder_path).map_err(|e| e.to_string())?;
+
+    let files: Vec<String> = entries
+        .filter_map(|entry| entry.ok())
+        .map(|entry| entry.path())
+        .filter(|path| {
+            path.extension()
+                .and_then(|e| e.to_str())
+                .map(|e| exts.contains(&e.to_lowercase().as_str()))
+                .unwrap_or(false)
+        })
+        .map(|path| path.to_string_lossy().to_string())
+        .collect();
+
+    Ok(files)
 }
