@@ -154,8 +154,8 @@ const clearSelectedFiles = () => {
           <button id="tbBt1" className={activePage === "home" ? "active" : ""} onClick={() => setActivePage("pg1")}>About</button>
           <button id="tbBt2" className={activePage === "home" ? "active" : ""} onClick={() => setActivePage("pg2")}>Drives</button>
           <button id="tbBt3" className={activePage === "home" ? "active" : ""} onClick={() => setActivePage("pg3")}>Audio Conversion</button>
-          <button id="tbBt4" className={activePage === "home" ? "active" : ""} onClick={() => setActivePage("pg4")}>Page 4</button>
-          <button id="tbBt5" className={activePage === "home" ? "active" : ""} onClick={() => setActivePage("pg5")}>Page 5</button>
+          <button id="tbBt4" className={activePage === "home" ? "active" : ""} onClick={() => setActivePage("pg4")}>Soundcloud Download</button>
+          <button id="tbBt5" className={activePage === "home" ? "active" : ""} onClick={() => setActivePage("pg5")}>USB Verification</button>
         </div>
       </div>
 
@@ -169,7 +169,7 @@ const clearSelectedFiles = () => {
               <br></br>- Convert audio files to different file types
               <br></br>- More coming soon...
             </p> */}
-            
+
             <p>The aim of this project is to simplify the process of formatting and managing USB storage for DJs.
                As a new DJ myself, understanding the process of setting up and formatting USBs, to be used on many 
                different decks, is difficult. But having an all-in-one app which allows you to format and manage 
@@ -180,6 +180,9 @@ const clearSelectedFiles = () => {
           <div id="pg1Pols">
             <p>This app does not send any data externally, all data used within the app is either stored locally or not stored at all.</p>
             <p>This app utilises FFmpeg (ffmpeg.exe), licensed under GPLv3. Source available at ffmpeg.org</p>
+            <br></br>
+            <p>App created by Tom Gambro</p>
+
           </div>
         </div>
       )} {/* End of page 1 */}
@@ -308,14 +311,26 @@ const clearSelectedFiles = () => {
           {conversionResults.length > 0 && (
             <div id="pg3Results">
               {conversionResults.map((r) => (
-                <p key={r.file}>{r.file}: {r.status}</p>
+                <p key={r.file}>{r.file} : {r.status}</p>
               ))}
             </div>
           )}
         </div>
       )} {/* end of page 3 */}
 
+
+      {activePage === "pg4" && (
+        <div id="pg4Main">
+          <h2>Under Construction</h2>
+        </div>
+      )} {/* end of page 4 */}
+
       
+      {activePage === "pg5" && (
+        <div id="pg5Main">
+          <h2>Under Construction</h2>
+        </div>
+      )} {/* end of page 5 */}
     </main>
   );
 }
