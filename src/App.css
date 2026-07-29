@@ -15,6 +15,8 @@
   --btn4: #4b9e6b;
   --btn4-hover: #6bc98f;
 
+  --div-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+
   background-color: var(--bg);
   font-family: Inter, Avenir, Helvetica, Arial, sans-serif;
   font-size: 16px;
@@ -27,6 +29,8 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   -webkit-text-size-adjust: 100%;
+
+  overflow-x: hidden;
 
 }
 
@@ -74,7 +78,9 @@ h1 {
   align-items: center;
   background-color: var(--panel);
   padding: 16px 0 12px;
-  border-bottom: 1px solid #33343f;
+  box-shadow: var(--div-shadow);
+  margin-bottom: 5px;
+  /*border-bottom: 1px solid #33343f;*/
 }
 
 #tbTitle {
@@ -129,6 +135,7 @@ h1 {
   padding: 5px 0px 5px 0px;
   margin: 0px 15px 0px 15px;
   border-radius: 10px;
+  box-shadow: var(--div-shadow);
 }
 
 #pg1Pols {
@@ -145,11 +152,12 @@ table {
   color: var(--text);
   border-radius: 8px;
   overflow: hidden;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+  box-shadow: var(--div-shadow);
 }
 
 thead {
   background-color: var(--btn);
+  text-align: center;
 }
 
 th {
@@ -184,6 +192,7 @@ tbody tr:last-child td {
   margin-top: 15px;
   font-size: 14px;
   cursor: pointer;
+  box-shadow: var(--div-shadow);
   transition: background-color 0.15s ease;
 }
 #pg2RefreshBtn:hover{
@@ -224,6 +233,7 @@ tbody tr:last-child td {
   padding: 16px;
   border-radius: 8px;
   text-align: left;
+  box-shadow: var(--div-shadow);
 }
 
 #pg2FormatPanel h3 {
@@ -291,6 +301,7 @@ tbody tr:last-child td {
   text-align: left;
   display: flex;
   justify-content: space-evenly;
+  box-shadow: var(--div-shadow);
 }
 
 .pg3PickBtn, #pg3ConvBtn ,#pg3ClearBtn{
@@ -344,4 +355,21 @@ tbody tr:last-child td {
 #pg3Controls select option {
   background-color: var(--btn);
   color: var(--text);
+}
+
+#pg3Table {
+  text-align: center;
+}
+
+#pg3Text{
+  width: fit-content;
+  padding: 20px;
+  border-radius: 8px;
+  background-color: var(--panel);
+  justify-self: center;
+  box-shadow: var(--div-shadow);
+}
+#pg3Text ul{
+  list-style: disc;
+  list-style-position: inside;
 }

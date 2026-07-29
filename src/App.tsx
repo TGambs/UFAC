@@ -315,6 +315,66 @@ const clearSelectedFiles = () => {
               ))}
             </div>
           )}
+
+          <div id="pg3Table">
+            <table>
+              <thead>
+                <tr>
+                  <th>Format</th>
+                  <th>Compression</th>
+                  <th>Quality</th>
+                  <th>Song artwork</th>
+                  <th>Supported by</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>MP3</td>
+                  <td>Lossy compression</td>
+                  <td>May lose quality</td>
+                  <td>Yes</td>
+                  <td>RKB &amp; Serato</td>
+                </tr>
+                <tr>
+                  <td>M4A</td>
+                  <td>Lossy compression</td>
+                  <td>May lose quality</td>
+                  <td>Yes</td>
+                  <td>RKB &amp; Serato</td>
+                </tr>
+                <tr>
+                  <td>WAV</td>
+                  <td>Uncompressed (large file size)</td>
+                  <td>No quality loss</td>
+                  <td>No</td>
+                  <td>RKB &amp; Serato</td>
+                </tr>
+                <tr>
+                  <td>FLAC</td>
+                  <td>Lossless compression</td>
+                  <td>No quality loss</td>
+                  <td>Yes</td>
+                  <td>RKB &amp; Serato DJ Pro (not Lite)</td>
+                </tr>
+              </tbody>
+            </table>
+            
+          </div>
+
+          <div id="pg3Text">
+            <b>FLAC is not supported on the following DJ decks:</b>
+
+            <ul>
+              <li>CDJ-2000 (original) and all earlier CDJs</li>
+              <li>CDJ-2000NXS (the original Nexus, not Nexus 2)</li>
+              <li>CDJ-900NXS</li>
+              <li>XDJ-700</li>
+              <li>XDJ-1000 (original only)</li>
+              <li>XDJ-RX (original) and XDJ-RX2</li>
+              <li>XDJ-XZ</li>
+            </ul>
+          </div>
+
         </div>
       )} {/* end of page 3 */}
 
