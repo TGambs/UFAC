@@ -1,8 +1,9 @@
-// Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
-#[tauri::command]
-fn greet(name: &str) -> String {
-    format!("Hello, {}! You've been greeted from Rust!", name)
-}
+
+#[cfg(target_os = "windows")]
+use std::os::windows::process::CommandExt;
+
+#[cfg(target_os = "windows")]
+const CREATE_NO_WINDOW: u32 = 0x08000000;
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
@@ -10,7 +11,7 @@ pub fn run() {
         .plugin(tauri_plugin_opener::init())
         .plugin(tauri_plugin_dialog::init())
         .plugin(tauri_plugin_shell::init())
-        .invoke_handler(tauri::generate_handler![greet, list_drives, eject_drive, format_drive, convert_audio, list_audio_files])
+        .invoke_handler(tauri::generate_handler![list_drives, eject_drive, format_drive, convert_audio, list_audio_files])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
@@ -37,6 +38,7 @@ struct Drive {
 #[tauri::command]
 fn list_drives() -> Result<Vec<Drive>, String> {
     let output = Command::new("powershell")
+        .creation_flags(CREATE_NO_WINDOW)
         .args([
             "-NoProfile",
             "-Command",
@@ -107,6 +109,7 @@ $drive = "{}"
     );
 
     let output = Command::new("powershell")
+        .creation_flags(CREATE_NO_WINDOW)
         .args([
             "-NoProfile",
             "-Command",
@@ -132,6 +135,7 @@ fn format_drive(letter: String, filesystem: String, label: String) -> Result<(),
     // Safety check: re-verify this is actually removable before formatting,
     // never trust the frontend alone for something destructive
     let check = Command::new("powershell")
+        .creation_flags(CREATE_NO_WINDOW)
         .args([
             "-NoProfile",
             "-Command",
@@ -190,6 +194,7 @@ fn convert_audio(input_path: String, target_format: String) -> Result<String, St
     let ffmpeg = "ffmpeg.exe";
 
     let output = Command::new(ffmpeg)
+        .creation_flags(CREATE_NO_WINDOW)
         .args([
             "-y",
             "-i", input.to_str().ok_or("Invalid input path")?,

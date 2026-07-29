@@ -178,7 +178,7 @@ const clearSelectedFiles = () => {
           </div>
 
           <div id="pg1Pols">
-            <p>This app does not send any data externally, all data used within the app is either stored locally or not stored at all.</p>
+            <p>This app does not send any data externally, and no data is stored on your device</p>
             <p>This app utilises FFmpeg (ffmpeg.exe), licensed under GPLv3. Source available at ffmpeg.org</p>
             <br></br>
             <p>App created by Tom Gambro</p>
