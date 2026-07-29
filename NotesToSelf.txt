@@ -9,4 +9,5 @@ Versions:
 - 1.1.1 = In progress | Updates to Audio page
 - 1.1.2 = Not Started
 
-- 1.2.0 = Not Started | Soundcloud downloader
+- 1.2.0 = Not Started | Soundcloud downloader -> yt-dlp.exe is in Downloads dir
+    cmd - yt-dlp.exe --embed-metadata --embed-thumbnail -x --audio-quality 0 -S acodec:mp3 <link> --ffmpeg-location <ffmpeg exe path>

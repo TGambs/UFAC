@@ -301,17 +301,21 @@ const clearSelectedFiles = () => {
           </div>
 
           {selectedFiles.length > 0 && (
-            <ul id="pg3FileList">
-              {selectedFiles.map((f) => (
-                <li key={f}>{f}</li>
-              ))}
-            </ul>
+            <div id="pg3Files">
+              <h4>Selected File(s):</h4>
+              <ul id="pg3FileList">
+                {selectedFiles.map((f) => (
+                  <li key={f}><i>{f}</i></li>
+                ))}
+              </ul>
+            </div>
           )}
 
           {conversionResults.length > 0 && (
             <div id="pg3Results">
+              <h4>Results:</h4>
               {conversionResults.map((r) => (
-                <p key={r.file}>{r.file} : {r.status}</p>
+                <p key={r.file}><i>{r.file}</i> : <b>{r.status}</b></p>
               ))}
             </div>
           )}

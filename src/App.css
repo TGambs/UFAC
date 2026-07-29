@@ -2,10 +2,17 @@
 :root {
   /* variable values used multiple times */
   --bg: #1e1f26;
+
   --panel: #252730;
+  --panel2: #24303d;
+  --panel3: #1f3327;
+  --panel4: #33251f;
+  --panel5: #2a2438;
+
   --accent: #5b7fff;
   --text: #e8e9ed;
   --text-muted: #9a9ca8;
+
   --btn: #2f313d;
   --btn-hover: #3a3d4d;
   --btn2: #7058c9;
@@ -147,10 +154,10 @@ h1 {
 table {
   width: 90%;
   margin: 20px auto;
+  border-radius: 8px;
   border-collapse: collapse;
   background-color: var(--panel);
   color: var(--text);
-  border-radius: 8px;
   overflow: hidden;
   box-shadow: var(--div-shadow);
 }
@@ -355,6 +362,31 @@ tbody tr:last-child td {
 #pg3Controls select option {
   background-color: var(--btn);
   color: var(--text);
+}
+
+#pg3Main h4 {
+  margin: 0px;
+  text-decoration: underline;
+  color: var(--text-muted);
+}
+
+#pg3Files {
+  background-color: var(--panel2);
+  width: 90%;
+  margin: 20px auto;
+  padding: 6px;
+  border-radius: 8px;
+}
+#pg3FileList {
+  text-align: left;
+}
+
+#pg3Results {
+  background-color: var(--panel3);
+  width: 90%;
+  margin: 20px auto;
+  padding: 6px;
+  border-radius: 8px;
 }
 
 #pg3Table {
