@@ -1,0 +1,12 @@
+For changing version type:
+- Change in package.json & Cargo.toml
+- git tag vX.X.X
+- git push origin vX.X.vX
+
+
+Versions:
+- 1.1.0 = Uploaded 29/07/26
+- 1.1.1 = In progress | Updates to Audio page
+- 1.1.2 = Not Started
+
+- 1.2.0 = Not Started | Soundcloud downloader
