@@ -3,8 +3,12 @@ The aim of this project is to simplify the process of formatting and managing US
 
 As of v1.1.0, the app only supports Windows devices, as Apple app development requires a $99/year fee
 
+Current Functionality:
+- USB drive formatting
+- Audio file type conversion
+- SoundCloud & Youtube audio downloading
+
 New additions to come:
-- Soundcloud downloading
 - Verification that the USB works with certain CDJs
 - Possible support for Mac (Apple) users
 - And more...
