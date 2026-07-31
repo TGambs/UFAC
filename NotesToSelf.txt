@@ -1,7 +1,7 @@
 For changing version type:
 - Change in package.json & Cargo.toml & tauri.conf.json (2 different places)
 - git tag vX.X.X
-- git push origin vX.X.vX
+- git push origin vX.X.X
 
 
 Versions:
