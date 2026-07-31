@@ -8,7 +8,6 @@ Versions:
 - 1.1.0 = Uploaded 29/07/26
 - 1.1.1 = Uploaded 30/07/26 | Updates to Audio page
 --------------------------------------------------------------------
-- 1.1.2 = In Progress | Need to ensure version type is correct, 
+- 1.1.2 = SKIPPED | Need to ensure version type is correct
 
-- 1.2.0 = Not Started | Soundcloud downloader -> yt-dlp.exe is in Downloads dir
-    cmd - yt-dlp.exe --embed-metadata --embed-thumbnail -x --audio-quality 0 -S acodec:mp3 <link> --ffmpeg-location <ffmpeg exe path>
+- 1.2.0 = In Progress | Soundcloud downloader -> yt-dlp.exe is in Downloads dir

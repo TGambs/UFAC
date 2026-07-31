@@ -405,3 +405,96 @@ tbody tr:last-child td {
   list-style: disc;
   list-style-position: inside;
 }
+
+
+/* ------------------------------- pg4 Music Downloads ----------------------------------- */
+
+#pg4Controls {
+  background-color: var(--panel);
+  width: 90%;
+  margin: 10px auto 20px;
+  padding: 16px;
+  border-radius: 8px;
+  text-align: left;
+  display: flex;
+  justify-content: space-evenly;
+  box-shadow: var(--div-shadow);
+}
+
+#pg4Controls input{
+  background-color: var(--btn-hover);
+  color: var(--text);
+  padding: 5px;
+  border: none;
+  border-radius: 6px;
+  width: 350px;
+}
+
+
+#pg4Controls button {
+  background-color: var(--btn4);
+  color: var(--text);
+  border: none;
+  border-radius: 6px;
+  padding: 8px 20px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+#pg4Controls button:hover{
+  background-color: var(--btn4-hover);
+}
+
+#pg4Controls select {
+  background-color: var(--btn);
+  color: var(--text);
+  border: 1px solid #3a3d4d;
+  border-radius: 6px;
+  padding: 8px 32px 8px 12px;
+  font-size: 14px;
+  cursor: pointer;
+  appearance: none; /* removes default arrow */
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%239a9ca8' d='M0 0l6 8 6-8z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+}
+#pg4Controls select:hover {
+  background-color: var(--btn-hover);
+}
+#pg4Controls select:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+#pg4Controls select option {
+  background-color: var(--btn);
+  color: var(--text);
+}
+
+#pg3DownloadResults {
+  background-color: var(--panel);
+  width: 90%;
+  margin: 10px auto 20px;
+  padding: 16px;
+  border-radius: 8px;
+  text-align: left;
+  display: flex;
+  justify-content: space-evenly;
+  box-shadow: var(--div-shadow);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+#pg4DownloadResults p{
+  margin: 8px;
+}
+
+#pg4DRM{
+  width: fit-content;
+  padding: 20px;
+  border-radius: 8px;
+  background-color: var(--panel);
+  justify-self: center;
+  box-shadow: var(--div-shadow);
+  font-size: 12pxpx;
+}

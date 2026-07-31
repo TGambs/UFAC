@@ -47,6 +47,10 @@ function App() {
     }
   };
 
+  useEffect(() => {
+    loadDrives();
+  }, []);
+
   const ejectDrive = async (letter: string) => {
   try {
     await invoke("eject_drive", { letter });
@@ -135,9 +139,41 @@ const clearSelectedFiles = () => {
 };
 
 
-  useEffect(() => {
-    loadDrives();
-  }, []);
+
+  /* ------------- For downloading songs -------------------- */
+
+
+const [downloadUrl, setDownloadUrl] = useState("");
+const [downloadFormat, setDownloadFormat] = useState("mp3");
+const [downloading, setDownloading] = useState(false);
+const [downloadResults, setDownloadResults] = useState<{ url: string; status: string; success: boolean }[]>([]);
+
+const startDownload = async () => {
+  if (!downloadUrl.trim()) return;
+
+  setDownloading(true);
+  setDownloadResults([]);
+
+  try {
+    const urls = await invoke<string[]>("expand_playlist", { url: downloadUrl });
+    const results: { url: string; status: string; success: boolean }[] = [];
+
+    for (const u of urls) {
+      try {
+        await invoke("download_audio", { url: u, format: downloadFormat });
+        results.push({ url: u, status: "Downloaded", success: true });
+      } catch (e) {
+        results.push({ url: u, status: String(e), success: false });
+      }
+      setDownloadResults([...results]); // update UI progressively as each finishes
+    }
+  } catch (e) {
+    setDownloadResults([{ url: downloadUrl, status: String(e), success: false }]);
+  }
+
+  setDownloading(false);
+};
+
 
   
 
@@ -154,7 +190,7 @@ const clearSelectedFiles = () => {
           <button id="tbBt1" className={activePage === "home" ? "active" : ""} onClick={() => setActivePage("pg1")}>About</button>
           <button id="tbBt2" className={activePage === "home" ? "active" : ""} onClick={() => setActivePage("pg2")}>Drives</button>
           <button id="tbBt3" className={activePage === "home" ? "active" : ""} onClick={() => setActivePage("pg3")}>Audio Conversion</button>
-          <button id="tbBt4" className={activePage === "home" ? "active" : ""} onClick={() => setActivePage("pg4")}>Soundcloud Download</button>
+          <button id="tbBt4" className={activePage === "home" ? "active" : ""} onClick={() => setActivePage("pg4")}>Music Download</button>
           <button id="tbBt5" className={activePage === "home" ? "active" : ""} onClick={() => setActivePage("pg5")}>USB Verification</button>
         </div>
       </div>
@@ -385,7 +421,47 @@ const clearSelectedFiles = () => {
 
       {activePage === "pg4" && (
         <div id="pg4Main">
-          <h2>Under Construction</h2>
+
+          <div id="pg4Controls">
+            <input
+              type="text"
+              placeholder="Song or playlist URL"
+              value={downloadUrl}
+              onChange={(e) => setDownloadUrl(e.target.value)}
+            />
+
+            <select value={downloadFormat} onChange={(e) => setDownloadFormat(e.target.value)}>
+              <option value="mp3">MP3</option>
+              <option value="wav">WAV</option>
+              <option value="m4a">M4A</option>
+              <option value="flac">FLAC</option>
+            </select>
+
+            <button onClick={startDownload} disabled={!downloadUrl.trim() || downloading}>
+              {downloading ? "Downloading…" : "Download"}
+            </button>
+          </div>
+
+          {downloadResults.length > 0 && (
+            <div id="pg3DownloadResults">
+              {downloadResults.map((r) => (
+                <div
+                  key={r.url}
+                  className={r.success ? "result-success" : "result-fail"}
+                >
+                  <p>{r.status} - {r.url}</p>
+                </div>
+              ))}
+            </div>
+          )}
+          
+          <div id="pg4DRM">
+            <p>Audio (songs or playlists) can be downloaded from SoundClound and Youtube, if DRM isn't in place</p>
+            <i>
+              <p>Digital Rights Management (DRM) protects copyrighted/controlled music from being downloaded or shared.
+              Unfortunately, this means that not all music can be downloaded, but the log will show you which ones were successful</p>
+            </i>
+          </div>
         </div>
       )} {/* end of page 4 */}
 

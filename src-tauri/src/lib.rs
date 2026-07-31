@@ -11,7 +11,7 @@ pub fn run() {
         .plugin(tauri_plugin_opener::init())
         .plugin(tauri_plugin_dialog::init())
         .plugin(tauri_plugin_shell::init())
-        .invoke_handler(tauri::generate_handler![list_drives, eject_drive, format_drive, convert_audio, list_audio_files])
+        .invoke_handler(tauri::generate_handler![list_drives, eject_drive, format_drive,list_audio_files, convert_audio, get_downloads_dir, expand_playlist, download_audio])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
@@ -232,4 +232,108 @@ fn list_audio_files(folder_path: String) -> Result<Vec<String>, String> {
         .collect();
 
     Ok(files)
+}
+
+
+
+// ----------------------------------------- Pg4 Audio Download ------------------------------------------------
+
+use tauri::Manager;
+use tauri_plugin_shell::ShellExt;
+use std::path::PathBuf;
+
+
+#[tauri::command]
+fn get_downloads_dir(app: tauri::AppHandle) -> Result<String, String> { // For finding where to put the downloads
+    app.path()
+        .download_dir()
+        .map(|p| p.to_string_lossy().to_string())
+        .map_err(|e| e.to_string())
+}
+
+#[tauri::command]
+async fn expand_playlist(app: tauri::AppHandle, url: String) -> Result<Vec<String>, String> {
+    let sidecar = app.shell().sidecar("yt-dlp").map_err(|e| e.to_string())?;
+    let output = sidecar
+        .args(["--flat-playlist", "--print", "url", &url])
+        .output()
+        .await
+        .map_err(|e| format!("Failed to check URL: {}", e))?;
+
+    if !output.status.success() {
+        return Err(String::from_utf8_lossy(&output.stderr).to_string());
+    }
+
+    let urls: Vec<String> = String::from_utf8_lossy(&output.stdout)
+        .lines()
+        .map(|s| s.to_string())
+        .filter(|s| !s.is_empty())
+        .collect();
+
+    // If it wasn't a playlist, --flat-playlist on a single video still returns one url
+    if urls.is_empty() {
+        Ok(vec![url])
+    } else {
+        Ok(urls)
+    }
+}
+
+
+fn resolve_ffmpeg_path(_app: &tauri::AppHandle) -> Result<PathBuf, String> {
+    let exe_dir = std::env::current_exe()
+        .map_err(|e| e.to_string())?
+        .parent()
+        .ok_or("Could not resolve exe directory")?
+        .to_path_buf();
+
+    let candidates = [
+        "ffmpeg.exe",
+        "ffmpeg-x86_64-pc-windows-msvc.exe",
+    ];
+
+    for name in candidates {
+        let path = exe_dir.join(name);
+        if path.exists() {
+            return Ok(path);
+        }
+    }
+
+    Err(format!("ffmpeg not found in {:?}", exe_dir))
+}
+
+
+#[tauri::command]
+async fn download_audio(app: tauri::AppHandle, url: String, format: String) -> Result<String, String> {
+    let downloads_dir = app.path().download_dir().map_err(|e| e.to_string())?;
+    let output_template = downloads_dir.join("%(title)s.%(ext)s");
+
+    let ffmpeg_path = resolve_ffmpeg_path(&app)?;
+
+    let sidecar = app.shell().sidecar("yt-dlp").map_err(|e| e.to_string())?;
+    let output = sidecar
+        .args([
+            "--embed-metadata",
+            "-x",
+            "--audio-format", &format,
+            "--audio-quality", "0",
+            "-o", output_template.to_str().ok_or("Invalid path")?,
+            "--ffmpeg-location", ffmpeg_path.to_str().ok_or("Invalid ffmpeg path")?,
+            &url,
+        ])
+        .output()
+        .await
+        .map_err(|e| format!("Failed to run yt-dlp: {}", e))?;
+
+    // If unable to download, Change the output to explain it simply
+    if !output.status.success() {
+        let stderr = String::from_utf8_lossy(&output.stderr);
+
+        if stderr.contains("DRM protected") {
+            return Err("This video is DRM protected ".to_string());
+        }
+
+        return Err(stderr.to_string());
+    }
+
+    Ok(url)
 }
