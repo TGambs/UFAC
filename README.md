@@ -9,6 +9,7 @@ Current Functionality:
 - SoundCloud & Youtube audio downloading
 
 New additions to come:
+- Serato and Rekordbox usb filesystem formatting
 - Verification that the USB works with certain CDJs
 - Possible support for Mac (Apple) users
 - And more...
